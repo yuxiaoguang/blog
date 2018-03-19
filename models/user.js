@@ -1,20 +1,11 @@
 const mongodb = require('./db');
-// function User(user) {
-//     this.name = user.name;
-// }
-//
-// User.prototype.save = function (callback) {
-//     console.log('From Server ', this.name);
-//     callback(this.name);
-// }
-
 
 function User(user) {
     this.name = user.name;
     this.password = user.password;
     this.email = user.email;
 }
-//箭头函数有问题
+//箭头函数this指向有问题
 User.prototype.save = function(callback) {
     console.log('Save User:', this);
     var user = {

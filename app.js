@@ -43,7 +43,6 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-// app.get('/', routes.index);
 
 routes(app);
 

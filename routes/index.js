@@ -1,30 +1,4 @@
 
-/*
- * GET home page.
- */
-/*//导出函数，以index 作为函数调用名字
-exports.index = function(req, res){
-  res.render('index', { title: 'Express' });
-};*/
-
-/*module.exports = (app) => {
-  app.get('/', (req, res) => res.render(
-        'index.ejs',
-        {
-          title: 'Express Blog',
-          data: [
-              {name: 'yuxiaoguang', job: 'front end engineer'},
-              {name: 'jack', job: 'IT engineer'},
-              {name: 'tom', job: 'accountant'},
-              {name: 'green', job: 'Techical Manager'}
-          ]
-        }
-      )
-  );
-  app.get('/nswbmw', (req, res) => res.send('Hello nswbmw'));
-}*/
-
-
 const crypto = require('crypto'),
       User = require('../models/user.js');
 module.exports = (app) => {
@@ -77,8 +51,27 @@ module.exports = (app) => {
     res.render('login.ejs', {title: '登录页'});
   });
   app.post('/login', (req, res) => {
-    "use strict";
-    // TODO:
+    const user = new User({
+      name: req.body.name,
+      password: req.body.password
+    });
+    user.password = crypto.createHash('md5').update(user.password).digest('hex');
+
+    User.get(user.name, (err, callbackUser) => {
+      if(err) {
+        req.flash('error', '获取用户失败');
+        return console.error('Error', '获取用户失败');
+      }
+      if(callbackUser && callbackUser.password === user.password){
+        req.flash('success', '登录成功');
+        console.log('success', '登录成功');
+        res.redirect('/');
+        return;
+      }
+      req.flash('error', '登录失败');
+      console.error('error', '登录失败');
+      res.redirect('/login');
+    });
   });
 
   app.get('/post', (req, res) => {

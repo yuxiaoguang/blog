@@ -7,12 +7,22 @@
     </head>
     <body>
         <header>
-            <h1><%= title %></h1>
+            <h1 class="left"> <%= title %> </h1>
+            <% if(user){ %>
+            <small class="right">当前用户： <%= user.name %></small>
+            <% } %>
         </header>
         <nav>
             <span><a title="主页" href="/">Home</a></span>
-            <span><a title="登录" href="/login">login</a></span>
-            <span><a title="注册" href="/reg">register</a></span>
+            <% if(user){ %>
+                <span><a title="发表" href="/post">Post</a></span>
+                <span><a title="登出" href="/logout">Logout</a></span>
+            <% }else {%>
+                <span><a title="注册" href="/reg">Register</a></span>
+                <span><a title="登录" href="/login">Login</a></span>
+            <% }%>
         </nav>
 
         <article>
+
+        <% include tip_template.ejs %>

@@ -12,6 +12,13 @@ p{
 header{
   padding: .5em 0;
   border-bottom: 1px solid #CCC;
+  height: 30px;
+  position: relative;
+}
+header:after{
+  content: '.';
+  clear: both;
+  visibility: hidden;
 }
 nav{
   position: fixed;
@@ -46,4 +53,36 @@ article a:hover{
 }
 .info{
   font-size: 14px;
+}
+
+.tip_wrap{
+}
+.tip_wrap .error{
+  color: red;
+  font-weight: bold;
+  background-color: #f2dede;
+  display: inline-block;
+  width: 100%;
+}
+.tip_wrap .info{
+  font-weight: bold;
+  background-color: #d9edf7;
+  display: inline-block;
+  width: 100%;
+}
+.tip_wrap .warn{
+  font-weight: bold;
+  background-color: #fcf8e3;
+  display: inline-block;
+  width: 100%;
+}
+
+.left{
+  float: left;
+}
+.right{
+  float: right;
+  bottom: 0;
+  position: absolute;
+  right: 0;
 }

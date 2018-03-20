@@ -1,13 +1,28 @@
 
 const crypto = require('crypto'),
       User = require('../models/user.js');
+      Post = require('../models/post.js');
 module.exports = (app) => {
+  app.get('/', checkLogin);
   app.get('/', (req, res) => {
-    res.render('home.ejs', {title: '主页'});
+    Post.get(null, (err, posts) => {
+      if(err){
+        req.flash('error', '获取博文失败');
+        posts = [];
+      }
+      res.render('home.ejs', {
+          title: '主页',
+          user: req.session.user,
+          posts: posts
+      });
+    })
   });
-
+  app.get('/reg', checkNotLogin);
   app.get('/reg', (req, res) => {
-    res.render('reg.ejs', {title: '注册页'});
+    res.render('reg.ejs', {
+      title: '注册页',
+      user: req.session.user
+    });
   });
   app.post('/reg', (req, res) => {
     let name = req.body.name,
@@ -25,30 +40,38 @@ module.exports = (app) => {
         password: password,
         email: req.body.email
     });
+    if(!newUser.name){
+        req.flash('error', '用户名不能为空');
+        return res.redirect('/reg');
+    }
     User.get(newUser.name, (err, user) => {
       if(err){
         req.flash('error', '检查当前用户报错');
-        return res.redirect('/reg');
+        return;
       }
       // 检查插入的用户是否已经存在
       if(user){
-        req.flash('error', '用户 <b>' + newUser.name + '</b> 已存在');
+        req.flash('error', '用户 ' + newUser.name + ' 已存在');
         return res.redirect('/reg');
       }
       newUser.save((err, user) => {
         if(err){
           req.flash('error', '保存用户失败');
-          return res.redirect('/reg');
+          return;
         }
         req.session.user = user;
-        req.flash('success', '注册成功');
+        req.flash('info', '注册成功');
         res.redirect('/');
       });
     });
   });
 
+  app.get('/login', checkNotLogin);
   app.get('/login', (req, res) => {
-    res.render('login.ejs', {title: '登录页'});
+    res.render('login.ejs', {
+        title: '登录页',
+        user: req.session.user
+    });
   });
   app.post('/login', (req, res) => {
     const user = new User({
@@ -60,44 +83,61 @@ module.exports = (app) => {
     User.get(user.name, (err, callbackUser) => {
       if(err) {
         req.flash('error', '获取用户失败');
-        return console.error('Error', '获取用户失败');
-      }
-      if(callbackUser && callbackUser.password === user.password){
-        req.flash('success', '登录成功');
-        console.log('success', '登录成功');
-        res.redirect('/');
         return;
       }
+      if(callbackUser && callbackUser.password === user.password){
+        req.flash('info', '登录成功');
+        req.session.user = callbackUser;
+        return res.redirect('/');
+      }
       req.flash('error', '登录失败');
-      console.error('error', '登录失败');
       res.redirect('/login');
     });
   });
 
+  app.get('/post', checkLogin);
   app.get('/post', (req, res) => {
     "use strict";
-    res.render('post.ejs', {title: '发表'});
+    res.render('post.ejs', {
+      title: '发表',
+      user: req.session.user
+    });
   });
   app.post('/post', (req, res) => {
-    "use strict";
-    // TODO:
+    let currentUser = req.session.user;
+        post = new Post(currentUser.name, req.body.title, req.body.post);
+    post.save((err) => {
+      if(err) {
+        req.flash('error', '发布失败');
+        return res.redirect('/');
+      }
+      req.flash('info', '发布成功');
+      res.redirect('/');
+    });
   });
 
+  app.get('/logout', checkLogin);
   app.get('/logout', (req, res) => {
-    "use strict";
-    // TODO:
+    req.session.user = null;
+    req.flash('info', '登出成功');
+    res.redirect('/');
   });
+
+  function checkLogin(req, res, next) {
+      if(!req.session.user){
+        req.flash('error', '未登录');
+        res.redirect('/login');
+      }
+      next();
+  }
+
+  function checkNotLogin(req, res, next) {
+      if(req.session.user){
+        req.flash('error', '已登录');
+        res.redirect('back');
+      }
+      next();
+  }
 
 }
-
-
-
-
-
-
-
-
-
-
-
 

@@ -12,6 +12,7 @@
     "express": "3.21.2"
   },
   "devDependencies": {
+    "moment": "^2.21.0",
     "mongodb": "^2.2.35"
   }
 }

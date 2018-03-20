@@ -17,7 +17,6 @@ var app = express();
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.use(flash());
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.json());
@@ -35,6 +34,12 @@ app.use(express.session({
         url: settings.url
     })
 }));
+app.use(flash());
+app.use((req, res, next) => {
+    res.locals.errors = req.flash('error');
+    res.locals.infos = req.flash('info');
+    next();
+});
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 

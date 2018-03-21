@@ -1,4 +1,5 @@
 const mongdb = require('./db');
+const markdown = require('markdown').markdown;
 const moment = require('moment');
 
 function Post(name, title, post) {
@@ -58,6 +59,9 @@ Post.get = (name, callback) => {
             collection.find(query).sort({time: -1}).toArray((err, docs) => {
                 mongdb.close();
                 if(err) return callback(err);
+                docs.forEach((doc, index) => {
+                    doc.post = markdown.toHTML(doc.post);
+                })
                 callback(null, docs);
             });
         });

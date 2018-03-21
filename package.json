@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "moment": "^2.21.0",
-    "mongodb": "^2.2.35"
+    "mongodb": "^2.2.35",
+    "markdown": "*"
   }
 }

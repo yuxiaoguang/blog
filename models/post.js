@@ -1,6 +1,9 @@
 const mongdb = require('./db');
 const markdown = require('markdown').markdown;
 const moment = require('moment');
+const util = require('util');
+
+console.log('markdown method：'+ util.inspect(markdown, true))
 
 function Post(name, title, post) {
     this.name = name;

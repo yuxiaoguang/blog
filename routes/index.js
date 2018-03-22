@@ -1,7 +1,11 @@
 
 const crypto = require('crypto'),
-      User = require('../models/user.js');
-      Post = require('../models/post.js');
+      User = require('../models/user.js'),
+      Post = require('../models/post.js'),
+      Path = require('path'),
+      Util = require('util'),
+      multipart = require('connect-multiparty')(),
+      fs = require('fs');
 module.exports = (app) => {
   app.get('/', checkLogin);
   app.get('/', (req, res) => {
@@ -104,6 +108,7 @@ module.exports = (app) => {
     });
   });
   app.post('/post', (req, res) => {
+    console.log('Test post');
     let currentUser = req.session.user;
         post = new Post(currentUser.name, req.body.title, req.body.post);
     post.save((err) => {
@@ -121,6 +126,32 @@ module.exports = (app) => {
     req.session.user = null;
     req.flash('info', '登出成功');
     res.redirect('/');
+  });
+
+  app.get('/upload', checkLogin);
+  app.get('/upload', (req, res) => {
+    res.render('upload', {
+      title: '文件上传',
+      user: req.session.user
+    });
+  });
+
+  app.post('/upload', multipart, (req, res) => {
+    const fileList = req.files;
+    console.log("########## "+Util.inspect(fileList, true));
+    for(let index in fileList){
+      let tempPath = fileList[index].path;
+      let targetPath = Path.join(__dirname, '/../public/images', fileList[index].name);
+      let readStream = fs.createReadStream(tempPath);
+      let wriiteStream = fs.createWriteStream(targetPath);
+      readStream.pipe(wriiteStream);
+      readStream.on('end', () => {
+        fs.unlinkSync(tempPath)
+        req.flash('info', '');
+      });
+    }
+    req.flash('info', '文件上传成功');
+    res.redirect('/upload');
   });
 
   function checkLogin(req, res, next) {

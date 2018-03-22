@@ -8,6 +8,7 @@
   "dependencies": {
     "connect-flash": "*",
     "connect-mongo": "*",
+    "connect-multiparty": "^2.1.0",
     "ejs": "*",
     "express": "3.21.2"
   },

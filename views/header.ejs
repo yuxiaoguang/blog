@@ -7,9 +7,9 @@
     </head>
     <body>
         <header>
-            <h1 class="left"> <%= title %> </h1>
+            <h1 class="header_title"> <%= title %> </h1>
             <% if(user){ %>
-            <small class="right">当前用户： <%= user.name %></small>
+            <small class="current_user">当前用户： <b><%= user.name %></b></small>
             <% } %>
         </header>
         <nav>

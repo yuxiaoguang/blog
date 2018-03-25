@@ -1,0 +1,20 @@
+<% include header.ejs %>
+<form method="post" action="/edit">
+    <h3>标题</h3>
+    <p><input type="text" name="title" value="<%= post.title %>" disabled="disabled"/></p>
+    <p><input type="hidden" name="title" value="<%= post.title %>"/></p>
+    <h3>作者</h3>
+    <p><input type="text" name="name" value="<%= post.name %>" disabled="disabled"/></p>
+    <p><input type="hidden" name="name" value="<%= post.name %>"/></p>
+    <h3>日期</h3>
+    <p><input type="text" name="day" value="<%= post.time.minute %>" disabled="disabled"/></p>
+    <p><input type="hidden" name="day" value="<%= post.time.day %>"/></p>
+    <h3>正文</h3>
+    <p>
+        <textarea cols="100" rows="20" name="post"><%= post.post %></textarea>
+    </p>
+    <p>
+        <input type="submit" value="保存修改" />
+    </p>
+</form>
+<% include footer.ejs %>

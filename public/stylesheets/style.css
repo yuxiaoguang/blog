@@ -80,12 +80,38 @@ article a:hover{
   width: 100%;
 }
 
-.left{
+.header_title{
   float: left;
 }
-.right{
+.current_user{
   float: right;
   bottom: 0;
   position: absolute;
   right: 0;
+}
+.current_user b{
+  color: deepskyblue;
+}
+
+form input[type='search']{
+  width: 100%;
+  height: 30px;
+  border: 0.5px solid #CCC;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.edit{
+  margin: 3px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background-color: #d7d2d2;
+  color: #090909;
+  font-size: 13px;
+}
+.edit:hover{
+  text-decoration: none;
+  background-color: #f00;
+  color: #fff;
+  -webkit-transition: color .2s linear;
 }

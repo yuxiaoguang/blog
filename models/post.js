@@ -3,8 +3,6 @@ const markdown = require('markdown').markdown;
 const moment = require('moment');
 const util = require('util');
 
-console.log('markdown method：'+ util.inspect(markdown, true))
-
 function Post(name, title, post) {
     this.name = name;
     this.title = title;
@@ -49,7 +47,7 @@ Post.prototype.save = function (callback) {
     });
 };
 
-Post.get = (name, callback) => {
+Post.searchAll = (name, callback) => {
     mongdb.open((err, db) => {
         if(err) return callback(err);
         db.collection('posts', (err, collection) => {
@@ -69,9 +67,65 @@ Post.get = (name, callback) => {
             });
         });
     });
+};
+
+Post.searchOne = (name, day, title, callback, options) => {
+    mongdb.open((err, db) => {
+        if(err) return callback(err);
+        db.collection('posts', (err, collection) => {
+            if(err){
+                mongdb.close();
+                return callback(err);
+            }
+            const query = {name: name, title: title, 'time.day': day};
+            collection.findOne(query, (err, doc) => {
+                mongdb.close();
+                if(err) return callback(err);
+                doc.post = markdown.toHTML(doc.post);
+                callback(null, doc);
+            });
+        });
+    });
+};
+
+Post.update = (name, day, title, post, callback, options) => {
+    mongdb.open((err, db) => {
+        if(err) return callback(err);
+        db.collection('posts', (err, collection) => {
+            if(err){
+                mongdb.close();
+                return callback(err);
+            }
+            const query = {name: name, 'time.day': day, title: title};
+            var updateStr = {$set: { post : post }};
+            collection.updateOne(query, updateStr, (err) => {
+                mongdb.close();
+                if(err) return callback(err);
+                Post.searchOne(name, day, title, (err, doc) => {
+                    callback(null, doc);
+                })
+            });
+        });
+    });
+};
+
+Post.remove = (name, day, title, callback, options) => {
+    mongdb.open((err, db) => {
+        if(err) return callback(err);
+        db.collection('posts', (err, collection) => {
+            if(err){
+                mongdb.close();
+                return callback(err);
+            }
+            const query = {name: name, 'time.day': day, title: title};
+            collection.deleteOne(query, (err, result) => {
+                mongdb.close();
+                if(err) return callback(err);
+                callback(null, result);
+            });
+        });
+    });
 }
-
-
 
 
 

@@ -9,7 +9,7 @@ const crypto = require('crypto'),
 module.exports = (app) => {
   app.get('/', checkLogin);
   app.get('/', (req, res) => {
-    Post.get(null, (err, posts) => {
+    Post.searchAll(null, (err, posts) => {
       if(err){
         req.flash('error', '获取博文失败');
         posts = [];
@@ -138,20 +138,114 @@ module.exports = (app) => {
 
   app.post('/upload', multipart, (req, res) => {
     const fileList = req.files;
-    console.log("########## "+Util.inspect(fileList, true));
+    console.log(fileList);
     for(let index in fileList){
+      if(!(fileList[index].name || fileList[index].size))continue;
       let tempPath = fileList[index].path;
       let targetPath = Path.join(__dirname, '/../public/images', fileList[index].name);
       let readStream = fs.createReadStream(tempPath);
       let wriiteStream = fs.createWriteStream(targetPath);
       readStream.pipe(wriiteStream);
       readStream.on('end', () => {
-        fs.unlinkSync(tempPath)
+        fs.unlinkSync(tempPath);
         req.flash('info', '');
       });
     }
     req.flash('info', '文件上传成功');
     res.redirect('/upload');
+  });
+
+  app.get('/u/:name', function(req, res) {
+    if(!req.params.name){
+        req.flash('error', '用户参数不存在');
+        return res.redirect('/');
+    }
+    User.get(req.params.name, (err, user) => {
+      if(err){
+        req.flash('error', err);
+        return res.redirect('/');
+      }
+      if(!user){
+          req.flash('error', '用户 ' + req.params.name + ' 不存在');
+          return res.redirect('/');
+      }
+      console.log(Util.inspect(req.params, true) + '###User:###' + user);
+      Post.searchAll(user.name, (err, posts) => {
+        if(err){
+          req.flash('error', err);
+          res.redirect('/');
+        }
+        res.render('user.ejs', {
+          title: user.name,
+          user: req.session.user,
+          posts: posts
+        });
+      });
+    });
+  });
+
+  app.get('/u/:name/:day/:title', checkLogin);
+  app.get('/u/:name/:day/:title', (req, res) => {
+    Post.searchOne(req.params.name, req.params.day, req.params.title, (err, post) => {
+      if(err){
+        req.flash('error', err);
+        return res.redirect('/');
+      }
+      res.render('article.ejs', {
+          title: post.title,
+          user: req.session.user,
+          post: post
+      });
+    });
+  });
+
+
+  app.get('/edit/:name/:day/:title', checkLogin);
+  app.get('/edit/:name/:day/:title', (req, res) => {
+    Post.searchOne(req.params.name, req.params.day, req.params.title, (err, doc) => {
+      if(err){
+        req.flash('error', err);
+        return res.redirect('/');
+      }
+      res.render('edit.ejs', {
+          title: req.params.title,
+          user: req.session.user,
+          post: doc
+      });
+    });
+
+  });
+
+  app.post('/edit', checkLogin);
+  app.post('/edit', (req, res) => {
+    const name = req.body.name;
+    const day = req.body.day;
+    const title = req.body.title;
+    const post = req.body.post;
+    Post.update(name, day, title, post, (err, doc) => {
+      if(err){
+        req.flash('error', err);
+        return;
+      }
+      req.flash('info', '修改成功');
+      res.render('article.ejs', {
+          title: doc.title,
+          user: req.session.user,
+          post: doc
+      });
+    });
+  });
+
+  app.get('/remove/:name/:day/:title', checkLogin);
+  app.get('/remove/:name/:day/:title', (req, res) => {
+    Post.remove(req.params.name, req.params.day, req.params.title, (err, result) => {
+      if(err){
+        req.flash('error', err);
+        return res.redirect('back');
+      }
+      req.flash('info', '删除成功');
+      res.redirect('/');
+    });
   });
 
   function checkLogin(req, res, next) {

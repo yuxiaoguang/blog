@@ -35,6 +35,7 @@ User.prototype.save = function(callback) {
 User.get = (name, callback) => {
     mongodb.open((err, db) => {
         if(err) return callback(err); //失败，返回错误信息
+        if(!name) return callback(null, null);
         // 读取users集合
         db.collection('users', (err, collection) => {
             if(err) return callback(err); //失败，返回错误信息

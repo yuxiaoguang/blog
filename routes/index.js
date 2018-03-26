@@ -222,17 +222,13 @@ module.exports = (app) => {
     const day = req.body.day;
     const title = req.body.title;
     const post = req.body.post;
-    Post.update(name, day, title, post, (err, doc) => {
+    Post.update(name, day, title, post, (err) => {
       if(err){
         req.flash('error', err);
         return;
       }
       req.flash('info', '修改成功');
-      res.render('article.ejs', {
-          title: doc.title,
-          user: req.session.user,
-          post: doc
-      });
+      res.redirect('back');
     });
   });
 

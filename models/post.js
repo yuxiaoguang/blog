@@ -101,9 +101,7 @@ Post.update = (name, day, title, post, callback, options) => {
             collection.updateOne(query, updateStr, (err) => {
                 mongdb.close();
                 if(err) return callback(err);
-                Post.searchOne(name, day, title, (err, doc) => {
-                    callback(null, doc);
-                })
+                callback(null, doc);
             });
         });
     });

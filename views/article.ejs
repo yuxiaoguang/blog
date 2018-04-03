@@ -14,10 +14,6 @@
     日期：<a href="#"><%= post.time.minute%></a>
 </p>
 <p><%- post.post %></p>
-<!--<p>
-    <section>
-        <a href="">评论</a>
-    </section>
-    <textarea name="message" rows="20" cols="100"></textarea>
-</p>-->
+<% include comment.ejs %>
+
 <% include footer.ejs %>

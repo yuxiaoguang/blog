@@ -24,7 +24,8 @@ Post.prototype.save = function (callback) {
         name: this.name,
         time: time,
         title: this.title,
-        post: this.post
+        post: this.post,
+        comments: []
     };
 
     mongdb.open((err, db) => {
@@ -62,7 +63,7 @@ Post.searchAll = (name, callback) => {
                 if(err) return callback(err);
                 docs.forEach((doc, index) => {
                     doc.post = markdown.toHTML(doc.post);
-                })
+                });
                 callback(null, docs);
             });
         });
@@ -82,6 +83,11 @@ Post.searchOne = (name, day, title, callback, options) => {
                 mongdb.close();
                 if(err) return callback(err);
                 doc.post = markdown.toHTML(doc.post);
+                if(doc.comments){
+                    doc.comments.forEach((comment, index) => {
+                        comment.content = markdown.toHTML(comment.content);
+                    });
+                }
                 callback(null, doc);
             });
         });

@@ -13,8 +13,9 @@
     "express": "3.21.2"
   },
   "devDependencies": {
+    "http-proxy-middleware": "^0.18.0",
+    "markdown": "*",
     "moment": "^2.21.0",
-    "mongodb": "^2.2.35",
-    "markdown": "*"
+    "mongodb": "^2.2.35"
   }
 }

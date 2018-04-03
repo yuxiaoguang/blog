@@ -2,10 +2,14 @@
 const crypto = require('crypto'),
       User = require('../models/user.js'),
       Post = require('../models/post.js'),
+      Comment = require('../models/comment');
       Path = require('path'),
       Util = require('util'),
       multipart = require('connect-multiparty')(),
-      fs = require('fs');
+      fs = require('fs'),
+      moment = require('moment'),
+      proxy = require('http-proxy-middleware');
+
 module.exports = (app) => {
   app.get('/', checkLogin);
   app.get('/', (req, res) => {
@@ -197,6 +201,33 @@ module.exports = (app) => {
           post: post
       });
     });
+  });
+
+  app.post('/u/:name/:day/:title', (req, res) => {
+      let date = moment();
+      let time = {
+          date: date,
+          year: date.format('YYYY'),
+          month: date.format('YYYY-MM'),
+          day: date.format('YYYY-MM-DD'),
+          minute: date.format('YYYY-MM-DD HH:mm')
+      };
+      let comment = {
+        name: req.body.name,
+        email: req.body.email,
+        website: req.body.website,
+        time: time,
+        content: req.body.content
+      };
+      let newComment = new Comment(req.body.name, req.params.day, req.params.title, comment);
+      newComment.save((err) => {
+        if(err) {
+            req.flash('info', err);
+            return res.redirect('back');
+        }
+        req.flash('success', '留言成功');
+        res.redirect('back');
+      })
   });
 
 

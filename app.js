@@ -7,11 +7,14 @@ var express = require('express');
 var routes = require('./routes');
 var http = require('http');
 var path = require('path');
+var moment = require('moment');
 var MongoStore = require('connect-mongo')(express);
 var settings = require('./settings');
 var flash = require('connect-flash');
 var bodyParser = require('body-parser');
-
+var fs = require('fs');
+var accessLog = fs.createWriteStream('access.log', {flags: 'a'});
+var errorLog = fs.createWriteStream('error.log', {flags: 'a'});
 
 var app = express();
 
@@ -21,6 +24,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.favicon());
 app.use(express.logger('dev'));
+app.use(express.logger({stream: accessLog}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.methodOverride());
@@ -44,12 +48,16 @@ app.use((req, res, next) => {
 });
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+app.use((err, req, res, next) => {
+    var meta = '[' + moment().format('YYYY-MM-DD HH:mm') + ']' + req.url + '\n';
+    errorLog.write(meta + err.stack + '\n');
+    next();
+});
 
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
-
 
 routes(app);
 

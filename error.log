@@ -1,0 +1,24 @@
+[2018-04-03 22:18]/
+Error: Can't set headers after they are sent.
+    at ServerResponse.OutgoingMessage.setHeader (_http_outgoing.js:346:11)
+    at ServerResponse.res.setHeader (D:\Project\Other\GitHub\blog\node_modules\express\node_modules\connect\lib\patch.js:134:22)
+    at ServerResponse.res.set.res.header (D:\Project\Other\GitHub\blog\node_modules\express\lib\response.js:595:10)
+    at ServerResponse.res.send (D:\Project\Other\GitHub\blog\node_modules\express\lib\response.js:151:12)
+    at fn (D:\Project\Other\GitHub\blog\node_modules\express\lib\response.js:841:10)
+    at tryHandleCache (D:\Project\Other\GitHub\blog\node_modules\ejs\lib\ejs.js:257:5)
+    at View.exports.renderFile [as engine] (D:\Project\Other\GitHub\blog\node_modules\ejs\lib\ejs.js:472:10)
+    at View.render (D:\Project\Other\GitHub\blog\node_modules\express\lib\view.js:76:8)
+    at Function.app.render (D:\Project\Other\GitHub\blog\node_modules\express\lib\application.js:561:10)
+    at ServerResponse.res.render (D:\Project\Other\GitHub\blog\node_modules\express\lib\response.js:845:7)
+[2018-04-03 22:19]/
+Error: Can't set headers after they are sent.
+    at ServerResponse.OutgoingMessage.setHeader (_http_outgoing.js:346:11)
+    at ServerResponse.res.setHeader (D:\Project\Other\GitHub\blog\node_modules\express\node_modules\connect\lib\patch.js:134:22)
+    at ServerResponse.res.set.res.header (D:\Project\Other\GitHub\blog\node_modules\express\lib\response.js:595:10)
+    at ServerResponse.res.send (D:\Project\Other\GitHub\blog\node_modules\express\lib\response.js:151:12)
+    at fn (D:\Project\Other\GitHub\blog\node_modules\express\lib\response.js:841:10)
+    at tryHandleCache (D:\Project\Other\GitHub\blog\node_modules\ejs\lib\ejs.js:257:5)
+    at View.exports.renderFile [as engine] (D:\Project\Other\GitHub\blog\node_modules\ejs\lib\ejs.js:472:10)
+    at View.render (D:\Project\Other\GitHub\blog\node_modules\express\lib\view.js:76:8)
+    at Function.app.render (D:\Project\Other\GitHub\blog\node_modules\express\lib\application.js:561:10)
+    at ServerResponse.res.render (D:\Project\Other\GitHub\blog\node_modules\express\lib\response.js:845:7)
